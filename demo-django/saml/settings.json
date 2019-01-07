@@ -2,29 +2,45 @@
     "strict": true,
     "debug": true,
     "sp": {
-        "entityId": "https://<sp_domain>/metadata/",
+        "entityId": "http://spid.test.it",
         "assertionConsumerService": {
-            "url": "https://<sp_domain>/?acs",
+            "url": "http://spid.test.it:8000/?acs",
             "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
         },
         "singleLogoutService": {
-            "url": "https://<sp_domain>/?sls",
+            "url": "http://spid.test.it:8000/?sls",
             "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
         },
-        "NameIDFormat": "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
-        "x509cert": "",
-        "privateKey": ""
+        "attributeConsumingService": {
+            "serviceName": "spid.test.it:8000",
+            "serviceDescription": "description",
+            "requestedAttributes": [
+                {
+                    "name": "name",
+                    "isRequired": true
+                },
+                {
+                    "name": "familyName",
+                    "isRequired": true
+                },
+                {
+                    "name": "email",
+                    "isRequired": true
+                }
+            ]
+        },
+        "NameIDFormat": "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
     },
     "idp": {
-        "entityId": "https://app.onelogin.com/saml/metadata/<onelogin_connector_id>",
+        "entityId": "http://idp.test.it:8088",
         "singleSignOnService": {
-            "url": "https://app.onelogin.com/trust/saml2/http-post/sso/<onelogin_connector_id>",
+            "url": "http://idp.test.it:8088/sso",
             "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
         },
         "singleLogoutService": {
-            "url": "https://app.onelogin.com/trust/saml2/http-redirect/slo/<onelogin_connector_id>",
+            "url": "http://idp.test.it:8088/slo",
             "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
         },
-        "x509cert": "<onelogin_connector_cert>"
+        "x509cert": "MIIC7TCCAdWgAwIBAgIJAJgrJOAeij+5MA0GCSqGSIb3DQEBCwUAMA0xCzAJBgNVBAYTAklUMB4XDTE5MDEwNzEyMTE1NloXDTE5MDIwNjEyMTE1NlowDTELMAkGA1UEBhMCSVQwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDsMRdR+ddXx+fZov/0Xbf/37zHChSDABpJ71SSu67wqfzEhlXmvFZQBsfVvTOgx8bbLgda6NnPiayr/8coHhKYAmb6UFsLz0J+UCpyI3K/KTEXsA/EuSo7y9ZkDxMnj6m0kN7oRNEplvLS+s/ig3a7bYaG5pPvcKr4LY3LRvoXNa1yIcVuiqUPpIps1wIPw6/lhN3jVuMWDVjbUUefHf7a8xrDVkzyC5lufd3t8bNR83FBCz55OGunekfycaEm0eGLCLtg6R6lGNAeApFGX5ihbKh6gQLY4L5zw2afKbgbBKb+TSb2x3b3rimf3cWfucHDhp146Rn8EliPQei4MGXtAgMBAAGjUDBOMB0GA1UdDgQWBBTpOfiBw3E2mArxcCJ2sSHdehY2ZTAfBgNVHSMEGDAWgBTpOfiBw3E2mArxcCJ2sSHdehY2ZTAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQCeb1JBB2P0eRTVC3FU5U/7jR8wEqPFtRPK51MMmq81Ss3BWcnyvFlcoQiz/JpP7NzmYWu2BeKoy1GUWI34K8ZHp3qqdskRtxGQ6V+FpxQoOOPCvHwJb64UA3FymfW9MXwe4ippevxejL4tEQN5cHqCwTqCXSQqa1vqMFSNYJoGXXxDdi1QYV9F5c++kVSpnBuJwCdDpkuxEEbYHGdGKNJKjsit6KYfgZANGKF11VtcmwP5KwITHYRbUsPKYWHmya/Xr8KW+ZMzSG91z0rFimhm81uEikeuS2RGmXbv5zMUuA8MdLJGF/4ewfiaiahr8l8TRKWZIL+1M2Fmsbq45nAp"        
     }
 }

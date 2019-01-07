@@ -7,6 +7,6 @@ admin.autodiscover()
 urlpatterns = [
     url(r'^$', index, name='index'),
     url(r'^attrs/$', attrs, name='attrs'),
-    url(r'^metadata/$', metadata, name='metadata')
+    url(r'metadata/$', metadata, name='metadata')
 ]
 

@@ -14,6 +14,7 @@ from base64 import b64encode, b64decode
 from lxml import etree
 from defusedxml.lxml import fromstring
 from xml.dom.minidom import Document
+from urlparse import urlparse
 
 from onelogin.saml2.constants import OneLogin_Saml2_Constants
 from onelogin.saml2.utils import OneLogin_Saml2_Utils
@@ -87,7 +88,8 @@ class OneLogin_Saml2_Logout_Request(object):
                 nq = None
             elif nq is not None:
                 # We only gonna include SPNameQualifier if NameQualifier is provided
-                spNameQualifier = sp_data['entityId']
+                # SPID: no! spNameQualifier = sp_data['entityId']
+		pass
 
             name_id_obj = OneLogin_Saml2_Utils.generate_name_id(
                 name_id,
@@ -103,6 +105,9 @@ class OneLogin_Saml2_Logout_Request(object):
             else:
                 session_index_str = ''
 
+            destination_url_parts = urlparse(idp_data['singleLogoutService']['url'])
+            destination = "%s://%s" % (destination_url_parts.scheme, destination_url_parts.netloc)
+
             logout_request = """<samlp:LogoutRequest
         xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
         xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
@@ -110,14 +115,17 @@ class OneLogin_Saml2_Logout_Request(object):
         Version="2.0"
         IssueInstant="%(issue_instant)s"
         Destination="%(single_logout_url)s">
-        <saml:Issuer>%(entity_id)s</saml:Issuer>
+        <saml:Issuer
+	      NameQualifier="%(entity_id)s"
+              Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity"
+              >%(entity_id)s</saml:Issuer>
         %(name_id)s
         %(session_index)s
     </samlp:LogoutRequest>""" % \
                 {
                     'id': uid,
                     'issue_instant': issue_instant,
-                    'single_logout_url': idp_data['singleLogoutService']['url'],
+                    'single_logout_url': destination,
                     'entity_id': sp_data['entityId'],
                     'name_id': name_id_obj,
                     'session_index': session_index_str,

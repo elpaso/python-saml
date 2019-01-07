@@ -9,7 +9,7 @@ AuthNRequest class of OneLogin's Python Toolkit.
 
 """
 from base64 import b64encode
-
+from urlparse import urlparse
 from onelogin.saml2.constants import OneLogin_Saml2_Constants
 from onelogin.saml2.utils import OneLogin_Saml2_Utils
 
@@ -48,7 +48,8 @@ class OneLogin_Saml2_Authn_Request(object):
         self.__id = uid
         issue_instant = OneLogin_Saml2_Utils.parse_time_to_SAML(OneLogin_Saml2_Utils.now())
 
-        destination = idp_data['singleSignOnService']['url']
+        destination_url_parts = urlparse(idp_data['singleSignOnService']['url'])
+        destination = "%s://%s" % (destination_url_parts.scheme, destination_url_parts.netloc)
 
         provider_name_str = ''
         organization_data = settings.get_organization()
@@ -77,8 +78,8 @@ class OneLogin_Saml2_Authn_Request(object):
 
             nameid_policy_str = """
     <samlp:NameIDPolicy
-        Format="%s"
-        AllowCreate="true" />""" % name_id_policy_format
+        Format="%s" />""" % name_id_policy_format
+        # SPID: AllowCreate="true" />""" % name_id_policy_format
 
         requested_authn_context_str = ''
         if 'requestedAuthnContext' in security.keys() and security['requestedAuthnContext'] is not False:
@@ -110,7 +111,10 @@ class OneLogin_Saml2_Authn_Request(object):
     ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
     AssertionConsumerServiceURL="%(assertion_url)s"
     %(attr_consuming_service_str)s>
-    <saml:Issuer>%(entity_id)s</saml:Issuer>%(nameid_policy_str)s%(requested_authn_context_str)s
+    <saml:Issuer
+	NameQualifier="%(entity_id)s"
+        Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity"
+	>%(entity_id)s</saml:Issuer>%(nameid_policy_str)s%(requested_authn_context_str)s
 </samlp:AuthnRequest>""" % \
             {
                 'id': uid,
